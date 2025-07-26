@@ -8,6 +8,8 @@ canvas.height = canvas.clientHeight;
 
 ///////////////////////////////////////////////////////////
 
+const MARKERS = new Map(); // id: { element, x, y }
+
 let scale;
 let minScale;
 let maxScale = 8;
@@ -21,73 +23,100 @@ let dragStart = { x: 0, y: 0 };
 const mapImage = new Image();
 mapImage.src = "../assets/gruvriket_map.png"
 mapImage.onload = () => {
-    scale = canvas.height / mapImage.height;
-    minScale = scale;
+  scale = canvas.height / mapImage.height;
+  minScale = scale;
 
-    offsetX = (canvas.width - mapImage.width * scale) / 2;
-    
-    drawMap();
+  offsetX = (canvas.width - mapImage.width * scale) / 2;
+  
+  drawMap();
 }
 
 ///////////////////////////////////////////////////////////
 
 function drawMap() {
-    clearCanvas();
-    ctx.imageSmoothingEnabled = false;
-    ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
-    ctx.drawImage(mapImage, 0, 0);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  clearCanvas();
+  ctx.imageSmoothingEnabled = false;
+  ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+  ctx.drawImage(mapImage, 0, 0);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  updateAllMarkers();
 }
 
 function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#3a211d";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#3a211d";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function addMarker(id, x, y, imgUrl) {
-    const marker = document.querySelector("#example-marker").cloneNode(true);
-    marker.id = id;
-    marker.style.left = x + "px";
-    marker.style.top = y + "px";
+  if (MARKERS.has(id)) return console.warn("Marker already exists.");
 
-    const layer = document.querySelector("#marker-layer")
-    layer.appendChild(marker);
+  const marker = document.querySelector("#example-marker").cloneNode(true);
+  marker.id = id;
 
-    if (imgUrl == null) return marker;
+  const layer = document.querySelector("#marker-layer")
+  layer.appendChild(marker);
 
+  if (imgUrl) {
     const icon = marker.querySelector(".marker-icon");
     icon.src = imgUrl;
     icon.classList.remove("hidden");
+  }
 
-    return marker;
+  MARKERS.set(id, { element: marker, x, y });
+  updateMarkerPosition(id);
+
+  return marker;
+}
+
+function updateMarkerPosition(id) {
+  const marker = MARKERS.get(id);
+  if (!marker) return;
+
+  const screenX = marker.x * scale + offsetX;
+  const screenY = marker.y * scale + offsetY;
+
+  marker.element.style.left = screenX + "px";
+  marker.element.style.top = screenY + "px";
+}
+
+function updateAllMarkers() {
+  MARKERS.forEach((marker, id) => updateMarkerPosition(id));
 }
 
 function moveMarker(id, x, y) {
-    const marker = document.querySelector(`.marker#${id}`);
-    marker.style.left = x + "px";
-    marker.style.top = y + "px";
+  const marker = MARKERS.get(id);
+  if (!marker) return console.warn("Marker not found.");
+  marker.x = x;
+  marker.y = y;
+  updateMarkerPosition(id);
+}
+
+function removeMarker(id) {
+  const marker = MARKERS.get(id);
+  if (!marker) return console.warn("Marker not found.");
+  marker.element.remove();
+  MARKERS.delete(id);
 }
 
 ///////////////////////////////////////////////////////////
 
 canvas.addEventListener('wheel', event => {
-    console.log(event)
+  const mouseX = event.offsetX;
+  const mouseY = event.offsetY;
 
-    const mouseX = event.offsetX;
-    const mouseY = event.offsetY;
+  const prevScale = scale;
 
-    const prevScale = scale;
+  scale += event.deltaY > 0 ? -.2 : .2;
 
-    scale += event.deltaY > 0 ? -.2 : .2;
+  scale = clamp(scale, minScale, maxScale);
 
-    scale = clamp(scale, minScale, maxScale);
+  const zoomFactor = scale / prevScale;
+  offsetX = mouseX - (mouseX - offsetX) * zoomFactor;
+  offsetY = mouseY - (mouseY - offsetY) * zoomFactor;
 
-    const zoomFactor = scale / prevScale;
-    offsetX = mouseX - (mouseX - offsetX) * zoomFactor;
-    offsetY = mouseY - (mouseY - offsetY) * zoomFactor;
-
-    drawMap();
+  drawMap();
 });
 
 canvas.addEventListener('mousedown', event => {
