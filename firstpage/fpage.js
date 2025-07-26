@@ -1,31 +1,62 @@
 const cardsData = [
   {
-    title: "Card One",
-    text: "This is the first card.",
-    image: "https://via.placeholder.com/300x160"
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
   },
   {
-    title: "Card Two",
-    text: "This is the second card.",
-    image: "https://via.placeholder.com/300x160"
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
   },
   {
-    title: "Card Three",
-    text: "This is the third card.",
-    image: "https://via.placeholder.com/300x160"
-  }
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  {
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  {
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  {
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  {
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  {
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  {
+    title: "Placeholder",
+    image: "https://assets.originrealms.com/cdn-cgi/image/format=webp,quality=90,fit=scale-down,width=1920/2023/09/Blight_Guide.png",
+    link: "#"
+  },
+  
 ];
 
 const container = document.getElementById("cards-container");
 
 cardsData.forEach(data => {
-  const card = document.createElement("div");
+  const card = document.createElement("a");
   card.className = "card";
+  card.href = data.link;
   card.innerHTML = `
-    <img src="${data.image}" alt="${data.title}">
+    <img src="${data.image}" alt="${data.title}" draggable="false">
     <div class="card-content">
       <div class="card-title">${data.title}</div>
-      <div class="card-text">${data.text}</div>
     </div>
   `;
   container.appendChild(card);
