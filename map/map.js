@@ -10,6 +10,9 @@ canvas.height = canvas.clientHeight;
 
 const MARKERS = new Map(); // id: { element, x, y }
 
+const WORLD_TOP_LEFT = { x: 1488, z: 2095 }
+const WORLD_BOTTOM_RIGHT = { x: 2255, z: 2894 }
+
 let scale;
 let minScale;
 let maxScale = 8;
@@ -98,6 +101,21 @@ function removeMarker(id) {
   if (!marker) return console.warn("Marker not found.");
   marker.element.remove();
   MARKERS.delete(id);
+}
+
+function worldToMapPixelCoords(x, y, z) {
+  if (!z) z = y;
+
+  const worldWidth = WORLD_BOTTOM_RIGHT.x - WORLD_TOP_LEFT.x;
+  const worldHeight = WORLD_BOTTOM_RIGHT.z - WORLD_TOP_LEFT.z + 1;
+
+  const relX = (x - WORLD_TOP_LEFT.x) / worldWidth;
+  const relZ = (z - WORLD_TOP_LEFT.z) / worldHeight;
+
+  const imageX = relX * mapImage.width;
+  const imageY = relZ * mapImage.height;
+
+  return { x: imageX, y: imageY };
 }
 
 ///////////////////////////////////////////////////////////

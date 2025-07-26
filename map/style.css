@@ -23,6 +23,7 @@ body {
     top: 0;
     left: 0;
     pointer-events: none;
+    overflow: hidden;
 }
 
 .marker {
@@ -34,6 +35,7 @@ body {
 .marker-body {
     position: relative;
     translate: -50% calc(-100% + var(--unit));
+    translate: -50% -100%;
 
     --width: 45;
     --width-px: calc(var(--width) * 1px);
