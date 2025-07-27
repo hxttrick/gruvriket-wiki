@@ -1,24 +1,139 @@
 <!DOCTYPE html>
+<!--
+⬛⬛🟩🟩⬛⬛⬛⬛⬛🟩🟩⬛⬛
+⬛⬛🟩⬛⬛⬛⬛⬛⬛⬛🟩⬛⬛
+⬛⬛⬛🟩⬛🟩⬛🟩⬛🟩⬛⬛⬛ 
+⬛⬛⬛⬛⬛🟩🟩🟩⬛⬛⬛⬛⬛
+⬛⬛🟩⬛⬛⬛⬛⬛⬛⬛🟩⬛⬛
+⬛⬛🟩🟩⬛⬛⬛⬛⬛🟩🟩⬛⬛ 
+Approved by Slem
+Made by Vamoi & Hxttrick 
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Gruvriket Wiki</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBImRk-6VfPZB_kISi-pwdUAdUo1z3aZ0A",
+      authDomain: "gruvriketwiki.firebaseapp.com",
+      projectId: "gruvriketwiki",
+      storageBucket: "gruvriketwiki.firebasestorage.app",
+      messagingSenderId: "926051664418",
+      appId: "1:926051664418:web:9c903d84815b9e5538c07b"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+  </script>
 </head>
 <body>
-  <header class="banner">
-    <a href="https://www.gruvriket.se/">
-     <img src="../assets/gruvriket3.png" alt="Banner" class="banner-image">
-    </a>
-  </header>
+  <div class="main-content">
+    <header class="banner">
+      <a href="https://www.gruvriket.se/">
+        <img src="../assets/gruvriket3.png" alt="Banner" class="banner-image">
+      </a>
+    </header>
 
-  <main class="cards-wrapper">
-    <div class="cards-container" id="cards-container"></div>
-  </main>
+    <main class="cards-wrapper">
+      <div class="cards-container" id="cards-container"></div>
+
+      <section id="login-panel-wrapper" style="display: none;">
+        <div id="login-panel-overlay"></div>
+        <div id="login-panel-modal">
+          <div class="admin-header">
+            <h3>Admin Login</h3>
+            <button id="close-login-modal" class="modal-close-btn" aria-label="Close">×</button>
+          </div>
+          <form id="login-form">
+            <input type="email" id="email" placeholder="Email" required />
+            <input type="password" id="password" placeholder="Password" required />
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="admin-panel-wrapper" style="display: none;">
+        <div id="admin-panel-overlay"></div>
+        <div id="admin-panel-modal">
+          <div class="admin-header">
+            <h3>Admin Panel</h3>
+            <button id="close-admin-modal" class="modal-close-btn" aria-label="Close">×</button>
+          </div>
+
+          <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="categories">Categories</button>
+            <button class="admin-tab" data-tab="pages">Pages</button>
+            <button class="admin-tab" data-tab="settings">Settings</button>
+          </div>
+
+          <div class="admin-section" id="admin-tab-categories">
+            <form id="add-category-form">
+              <input type="text" id="category-title" placeholder="Title" required />
+              <input type="text" id="category-image" placeholder="Image Path or URL" required />
+              <input type="text" id="category-link" placeholder="Link URL" required />
+              <button type="submit">Add Category</button>
+            </form>
+            <div id="category-list" style="margin-top: 1rem;"></div>
+          </div>
+
+          <div class="admin-section" id="admin-tab-pages" style="display: none;">
+            <p>Pages management coming soon.</p>
+          </div>
+
+          <div class="admin-section" id="admin-tab-settings" style="display: none;">
+            <p>Settings panel coming soon.</p>
+          </div>
+
+          <button id="logout-btn" style="margin-top: 1rem;">Logout</button>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <footer class="footer">
     <p>© 2025 gruvriket.se</p>
+    <div class="admin-controls">
+      <button id="show-login-btn" style="display: none;">Admin Login</button>
+      <button id="open-admin-panel" style="display: none;">Admin Panel</button>
+    </div>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginBtn = document.getElementById('show-login-btn');
+      const openPanelBtn = document.getElementById('open-admin-panel');
+      const adminWrapper = document.getElementById('admin-panel-wrapper');
+
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          try {
+            const tokenResult = await user.getIdTokenResult();
+            const isAdmin = tokenResult.claims.admin === true;
+
+            if (isAdmin) {
+              loginBtn.style.display = 'none';
+              openPanelBtn.style.display = 'inline-block';
+            } else {
+              loginBtn.style.display = 'none';
+              openPanelBtn.style.display = 'none';
+            }
+          } catch (error) {
+            console.error('Failed to fetch token claims:', error);
+            loginBtn.style.display = 'inline-block';
+            openPanelBtn.style.display = 'none';
+          }
+        } else {
+          loginBtn.style.display = 'inline-block';
+          openPanelBtn.style.display = 'none';
+        }
+      });
+    });
+  </script>
 
   <script src="fpage.js"></script>
 </body>
