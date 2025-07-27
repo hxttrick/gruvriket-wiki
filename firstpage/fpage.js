@@ -44,7 +44,7 @@ function loadCategories() {
         label.textContent = data.title;
 
         const toggleBtn = document.createElement("button");
-        toggleBtn.textContent = "▼ Edit";
+        toggleBtn.textContent = "▼ Redigera";
         toggleBtn.style.marginLeft = "8px";
         toggleBtn.style.cursor = "pointer";
 
@@ -54,15 +54,15 @@ function loadCategories() {
 
         toggleBtn.onclick = () => {
           content.style.display = content.style.display === "none" ? "block" : "none";
-          toggleBtn.textContent = content.style.display === "block" ? "▲ Hide" : "▼ Edit";
+          toggleBtn.textContent = content.style.display === "block" ? "▲ Dölj" : "▼ Redigera";
         };
 
         const editForm = document.createElement("form");
         editForm.innerHTML = `
-          <input type="text" placeholder="Title" value="${data.title}" style="margin-bottom: 4px; display: block; width: 100%;" />
-          <input type="text" placeholder="Image URL" value="${data.image}" style="margin-bottom: 4px; display: block; width: 100%;" />
-          <input type="text" placeholder="Link URL" value="${data.link}" style="margin-bottom: 4px; display: block; width: 100%;" />
-          <button type="submit" style="margin-top: 4px;">Save</button>
+          <input type="text" placeholder="Namn på Kategori" value="${data.title}" style="margin-bottom: 4px; display: block; width: 100%;" />
+          <input type="text" placeholder="URL eller filnamn *placeholder.png*" value="${data.image}" style="margin-bottom: 4px; display: block; width: 100%;" />
+          <input type="text" placeholder="Länk till Kategori" value="${data.link}" style="margin-bottom: 4px; display: block; width: 100%;" />
+          <button type="submit" style="margin-top: 4px;">Spara</button>
         `;
 
         editForm.addEventListener("submit", e => {
@@ -78,7 +78,7 @@ function loadCategories() {
         });
 
         const removeBtn = document.createElement("button");
-        removeBtn.textContent = "Delete";
+        removeBtn.textContent = "Radera";
         removeBtn.style.marginTop = "6px";
         removeBtn.style.padding = "4px 8px";
         removeBtn.style.cursor = "pointer";

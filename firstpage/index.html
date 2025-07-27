@@ -49,10 +49,11 @@ Made by Vamoi & Hxttrick
             <h3>Admin Login</h3>
             <button id="close-login-modal" class="modal-close-btn" aria-label="Close">×</button>
           </div>
+          <h5>Endast admins på Gruvriket Wiki kan logga in här!<h5>
           <form id="login-form">
-            <input type="email" id="email" placeholder="Email" required />
-            <input type="password" id="password" placeholder="Password" required />
-            <button type="submit">Login</button>
+            <input type="email" id="email" placeholder="E-post" required />
+            <input type="password" id="password" placeholder="Lösenord" required />
+            <button type="submit">Logga in</button>
           </form>
         </div>
       </section>
@@ -66,30 +67,20 @@ Made by Vamoi & Hxttrick
           </div>
 
           <div class="admin-tabs">
-            <button class="admin-tab active" data-tab="categories">Categories</button>
-            <button class="admin-tab" data-tab="pages">Pages</button>
-            <button class="admin-tab" data-tab="settings">Settings</button>
+            <button class="admin-tab active" data-tab="categories">Kategorier</button>
+<!-- kan lägga till mer inställningar i panelen här-->
           </div>
 
           <div class="admin-section" id="admin-tab-categories">
             <form id="add-category-form">
-              <input type="text" id="category-title" placeholder="Title" required />
-              <input type="text" id="category-image" placeholder="Image Path or URL" required />
-              <input type="text" id="category-link" placeholder="Link URL" required />
-              <button type="submit">Add Category</button>
+              <input type="text" id="category-title" placeholder="Namn på kategori" required />
+              <input type="text" id="category-image" placeholder="URL eller filnamn `placeholder.png`" required />
+              <input type="text" id="category-link" placeholder="Länk till sida för kategori" required />
+              <button type="submit">Lägg till kategori</button>
             </form>
             <div id="category-list" style="margin-top: 1rem;"></div>
           </div>
-
-          <div class="admin-section" id="admin-tab-pages" style="display: none;">
-            <p>Pages management coming soon.</p>
-          </div>
-
-          <div class="admin-section" id="admin-tab-settings" style="display: none;">
-            <p>Settings panel coming soon.</p>
-          </div>
-
-          <button id="logout-btn" style="margin-top: 1rem;">Logout</button>
+          <button id="logout-btn" style="margin-top: 1rem;">Logga ut</button>
         </div>
       </section>
     </main>
