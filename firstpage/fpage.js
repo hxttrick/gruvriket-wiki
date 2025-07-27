@@ -3,6 +3,19 @@ const adminBtn = document.getElementById("open-admin-panel");
 const loginWrapper = document.getElementById("login-panel-wrapper");
 const adminWrapper = document.getElementById("admin-panel-wrapper");
 
+const firebaseConfig = {
+  apiKey: "AIzaSyBImRk-6VfPZB_kISi-pwdUAdUo1z3aZ0A",
+  authDomain: "gruvriketwiki.firebaseapp.com",
+  projectId: "gruvriketwiki",
+  storageBucket: "gruvriketwiki.firebasestorage.app",
+  messagingSenderId: "926051664418",
+  appId: "1:926051664418:web:9c903d84815b9e5538c07b"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
 function getImageSrc(path) {
   if (path.startsWith("http")) return path;
   return "../assets/" + path.replace(/^\/+/, "");
@@ -191,8 +204,32 @@ document.getElementById("add-category-form").addEventListener("submit", e => {
 
 document.getElementById("logout-btn").addEventListener("click", () => {
   auth.signOut().then(() => {
-    setAdminView(false);
+    loginBtn.style.display = "inline-block";
+    adminBtn.style.display = "none";
+    loginWrapper.style.display = "none";
+    adminWrapper.style.display = "none";
   });
 });
 
 loadCategories();
+function setupAdminPanel(loaderFn, formId, fieldIds, collection, extraData = {}) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const data = {};
+    fieldIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const key = id.replace(/^item-/, "").replace(/^category-/, "");
+        data[key] = el.value.trim();
+      }
+    });
+    Object.assign(data, extraData);
+    db.collection(collection).add(data).then(() => {
+      loaderFn();
+      form.reset();
+    });
+  });
+}

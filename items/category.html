@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Category</title>
+  <link rel="stylesheet" href="../firstpage/style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="main-content">
+    <header class="banner">
+<a href="../firstpage/index.html">
+  <img src="../assets/gruvriket3.png" alt="Banner" class="banner-image">
+</a>
+    </header>
+
+    <main class="cards-wrapper">
+      <div class="cards-container items-view" id="cards-container"></div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p>© 2025 gruvriket.se</p>
+    <div class="admin-controls">
+      <button id="show-login-btn" style="display: none;">Admin Login</button>
+      <button id="open-admin-panel" style="display: none;">Admin Panel</button>
+    </div>
+  </footer>
+
+  <section id="login-panel-wrapper" style="display: none;">
+    <div id="login-panel-overlay"></div>
+    <div id="login-panel-modal">
+      <div class="admin-header">
+        <h3>Admin Login</h3>
+        <button id="close-login-modal" class="modal-close-btn" aria-label="Close">×</button>
+      </div>
+      <form id="login-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="admin-panel-wrapper" style="display: none;">
+    <div id="admin-panel-overlay"></div>
+    <div id="admin-panel-modal">
+      <div class="admin-header">
+        <h3>Admin Panel</h3>
+        <button id="close-admin-modal" class="modal-close-btn" aria-label="Close">×</button>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="items">Items</button>
+      </div>
+
+      <div class="admin-section" id="admin-tab-items">
+        <form id="add-item-form">
+          <input type="text" id="item-name" placeholder="Item Name" required />
+          <input type="text" id="item-image" placeholder="Item Image (URL or filename)" required />
+          <input type="text" id="item-rarity" placeholder="Rarity Image (URL or filename)" required />
+          <input type="text" id="item-flavor" placeholder="Flavor Text" />
+          <textarea id="item-stats" placeholder="Stats or Description"></textarea>
+          <button type="submit">Add Item</button>
+        </form>
+        <div id="item-list" style="margin-top: 1rem;"></div>
+      </div>
+
+      <button id="logout-btn" style="margin-top: 1rem;">Logout</button>
+    </div>
+  </section>
+
+  <script src="../firstpage/fpage.js"></script>
+  <script src="category.js"></script>
+</body>
+</html>
