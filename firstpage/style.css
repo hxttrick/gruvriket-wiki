@@ -340,6 +340,7 @@ body {
   width: 120px;
   height: auto;
   border-radius: 8px;
+  image-rendering: pixelated;
 }
 
 .item-info {
@@ -352,6 +353,7 @@ body {
 .rarity-image {
   max-height: 100px;
   margin-bottom: 6px;
+    image-rendering: pixelated;
 }
 
 .item-name {
