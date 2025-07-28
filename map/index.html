@@ -7,18 +7,20 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="map-container">
-        <canvas id="mapCanvas"></canvas>
-        <div id="marker-layer">
-            <div class="marker" id="example-marker">
-                <div class="marker-body">
-                    <img class="marker-img" src="../assets/gruvriket_marker.png">
-                    <img class="marker-icon hidden" src="">
+    <div id="map-ui">
+        <div id="map-container">
+            <canvas id="mapCanvas"></canvas>
+            <div id="marker-layer">
+                <div class="marker" id="example-marker">
+                    <div class="marker-body">
+                        <img class="marker-img" src="../assets/gruvriket_marker.png">
+                        <img class="marker-icon hidden" src="">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <script src="map.js"></script>
     <script src="../util.js"></script>
+    <script src="map.js"></script>
 </body>
 </html>

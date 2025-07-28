@@ -1,19 +1,45 @@
+:root {
+    --map-ui-height: 80vh;
+    --map-ui-height-unit: calc(var(--map-ui-height)/170)
+}
+
 body {
     margin: 0;
     display: grid;
+    place-items: center;
+    background: #121212;
+    height: 100vh;
+}
+
+#map-ui {
+    image-rendering: pixelated;
+    background: url("../assets/gruvriket_karta_ui.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    overflow: hidden;
+    height: var(--map-ui-height);
+    width: calc(calc(223/170)*var(--map-ui-height));
+    display: flex;
+    flex-direction: column;
 }
 
 #map-container {
-  margin: auto;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  /*margin: calc(calc(var(--map-ui-height)/170)*20) calc(calc(var(--map-ui-height)/223)*31);*/
+  margin-top: calc(20 * var(--map-ui-height-unit));
+  margin-left: calc(31 * var(--map-ui-height-unit));
+  margin-right: calc(29 * var(--map-ui-height-unit));
+  margin-bottom: calc(39 * var(--map-ui-height-unit));
+  height: 100%;
+  position: relative;
 }
 
 #mapCanvas {
+    display: block;
     width: 100%;
     height: 100%;
     image-rendering: pixelated;
+    user-select: none;
 }
 
 #marker-layer {

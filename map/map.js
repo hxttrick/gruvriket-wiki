@@ -17,6 +17,8 @@ let scale;
 let minScale;
 let maxScale = 8;
 
+let initialZoom = 1;
+
 let offsetX = 0;
 let offsetY = 0;
 
@@ -26,12 +28,18 @@ let dragStart = { x: 0, y: 0 };
 const mapImage = new Image();
 mapImage.src = "../assets/gruvriket_map.png"
 mapImage.onload = () => {
-  scale = canvas.height / mapImage.height;
+  scale = canvas.width / mapImage.width;
   minScale = scale;
 
   offsetX = (canvas.width - mapImage.width * scale) / 2;
-  
+  offsetY = (canvas.height - mapImage.height * scale) / 2;
+
   drawMap();
+  zoomAtPoint(initialZoom, canvas.width / 2, canvas.height / 2);
+};
+
+async function loadMarkers() {
+
 }
 
 ///////////////////////////////////////////////////////////
@@ -50,6 +58,19 @@ function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#3a211d";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function clampOffset() {
+  const mapWidth = mapImage.width * scale;
+  const mapHeight = mapImage.height * scale;
+
+  const minX = Math.min(0, canvas.width - mapWidth);
+  const minY = Math.min(0, canvas.height - mapHeight);
+  const maxX = 0;
+  const maxY = 0;
+
+  offsetX = clamp(offsetX, minX, maxX);
+  offsetY = clamp(offsetY, minY, maxY);
 }
 
 function addMarker(id, x, y, imgUrl) {
@@ -121,52 +142,61 @@ function worldToMapPixelCoords(x, y, z) {
 ///////////////////////////////////////////////////////////
 
 canvas.addEventListener('wheel', event => {
-  const mouseX = event.offsetX;
-  const mouseY = event.offsetY;
+  event.preventDefault();
+  const delta = event.deltaY > 0 ? -.2 : .2;
+  zoomAtPoint(delta, event.offsetX, event.offsetY);
+}, { passive: false } );
 
+function zoomAtPoint(zoomDelta, centerX, centerY) {
   const prevScale = scale;
 
-  scale += event.deltaY > 0 ? -.2 : .2;
-
+  scale += zoomDelta;
   scale = clamp(scale, minScale, maxScale);
 
   const zoomFactor = scale / prevScale;
-  offsetX = mouseX - (mouseX - offsetX) * zoomFactor;
-  offsetY = mouseY - (mouseY - offsetY) * zoomFactor;
 
+  offsetX = centerX - (centerX - offsetX) * zoomFactor;
+  offsetY = centerY - (centerY - offsetY) * zoomFactor;
+
+  clampOffset();
   drawMap();
-});
+}
 
 canvas.addEventListener('mousedown', event => {
   isDragging = true;
   dragStart.x = event.clientX;
   dragStart.y = event.clientY;
-  canvas.style.cursor = "grabbing";
+  document.body.style.cursor = "grabbing";
 });
 
-canvas.addEventListener('mouseup', () => {
+document.addEventListener('mouseup', () => {
   isDragging = false;
-  canvas.style.cursor = "default";
+  document.body.style.cursor = "default";
 });
 
-canvas.addEventListener('mousemove', event => {
+document.addEventListener('mousemove', event => {
   if (!isDragging) return;
 
   const dx = event.clientX - dragStart.x;
   const dy = event.clientY - dragStart.y;
+
   dragStart.x = event.clientX;
   dragStart.y = event.clientY;
 
   offsetX += dx;
   offsetY += dy;
 
+  clampOffset();
   drawMap();
 });
 
+const container = document.getElementById('map-container');
 new ResizeObserver(() => {
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
+  canvas.width = container.clientWidth;
+  canvas.height = container.clientHeight;
+  
+  clampOffset();
   drawMap();
-}).observe(canvas);
+}).observe(container);
 
 ///////////////////////////////////////////////////////////
