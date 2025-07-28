@@ -32,6 +32,7 @@ body {
   margin-bottom: calc(39 * var(--map-ui-height-unit));
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 #mapCanvas {
