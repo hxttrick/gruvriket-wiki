@@ -42,10 +42,11 @@ main .banner {
 
     height: 3em;
     width: 100%;
-    
+
     image-rendering: pixelated;
     background-image: url(assets/construction_bg.png);
     background-size: contain;
+    background-position: 50%;
 
     font-family: 'Retro Computer', sans-serif;
     font-size: 1.4rem;
