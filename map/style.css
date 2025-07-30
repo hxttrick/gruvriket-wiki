@@ -25,10 +25,9 @@ body {
 }
 
 #map-container {
-  /*margin: calc(calc(var(--map-ui-height)/170)*20) calc(calc(var(--map-ui-height)/223)*31);*/
-  margin-top: calc(20 * var(--map-ui-height-unit));
-  margin-left: calc(31 * var(--map-ui-height-unit));
-  margin-right: calc(29 * var(--map-ui-height-unit));
+  margin-top:    calc(20 * var(--map-ui-height-unit));
+  margin-left:   calc(31 * var(--map-ui-height-unit));
+  margin-right:  calc(29 * var(--map-ui-height-unit));
   margin-bottom: calc(39 * var(--map-ui-height-unit));
   height: 100%;
   position: relative;
