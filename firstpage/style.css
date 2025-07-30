@@ -176,7 +176,7 @@ body {
 }
 
 #admin-panel-modal input,
-#login-panel-modal input {
+#login-panel-modal input, textarea {
   display: block;
   width: 100%;
   margin: 10px 0;
@@ -186,6 +186,11 @@ body {
   color: #fff;
   border-radius: 5px;
   box-sizing: border-box;
+}
+textarea {
+  resize: vertical;
+  min-height: fit-content;
+  max-height: 7em;
 }
 
 #admin-panel-modal form button,
@@ -375,4 +380,142 @@ body {
   border-top: 1px solid #333;
   padding-top: 6px;
   font-size: 0.95rem;
+}
+#item-stats {
+background-color: #2c2c2c;
+resize: vertical;
+width: 99%;
+}
+.item-tags {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag {
+  background-color: #333;
+  color: #ccc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+.draggable-item {
+  border: 1px solid #333;
+  padding: 10px;
+  margin-bottom: 12px;
+  background-color: #222;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.drag-handle {
+  cursor: grab;
+  display: inline-block;
+  margin-bottom: 4px;
+  font-size: 1rem;
+  color: #aaa;
+}
+#item-list {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 5px;
+  position: relative;
+}
+
+.draggable-item {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: grab;
+  font-size: 0.85rem;
+}
+
+.draggable-item.dragging {
+  opacity: 0.5;
+  border: 2px dashed #888;
+  background-color: #1a1a1a;
+}
+
+.drag-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.drag-placeholder {
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px dashed #888;
+  border-radius: 6px;
+  margin: 4px 0;
+}
+
+.drag-header button {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background-color: #444;
+  color: #fff;
+}
+
+.edit-fields input,
+.edit-fields textarea {
+  width: 100%;
+  margin-top: 4px;
+  background-color: #1e1e1e;
+  color: #ccc;
+  border: 1px solid #555;
+  padding: 6px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.edit-fields button.save-edit {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.edit-fields button.save-edit:hover {
+  background-color: #0056b3;
+}
+.edit-fields label {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 6px;
+  display: block;
+}
+#logout-btn {
+  margin-top: 1rem;
+  width: 20%;
+  padding: 10px;
+  font-size: 0.95rem;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#logout-btn:hover {
+  background-color: #555;
+  border-color: #777;
+  color: #fff;
 }
