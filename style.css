@@ -28,6 +28,7 @@ header #logo {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    min-height: 4rem;
 }
 
 main {
@@ -52,6 +53,7 @@ main .banner {
     font-size: 1.4rem;
     text-rendering: geometricPrecision;
     text-transform: uppercase;
+    text-wrap: nowrap;
     color: #fff;
 
     --outline-width: 0.2rem;
