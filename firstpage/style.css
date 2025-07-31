@@ -5,7 +5,8 @@ body {
   margin: 0;
   font-family: sans-serif;
   background-color: #121212;
-  color: #fff;
+  color: #ffffff;
+  overflow-x: hidden;
 }
 
 .main-content {
@@ -20,6 +21,7 @@ body {
 }
 
 .banner {
+  background-color: #121212;
   padding: 1rem 0;
   display: flex;
   justify-content: center;
@@ -30,7 +32,14 @@ body {
 }
 
 .banner-image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
   max-height: 150px;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+  box-sizing: border-box;
 }
 
 .cards-wrapper {
@@ -167,7 +176,7 @@ body {
 }
 
 #admin-panel-modal input,
-#login-panel-modal input, #admin-panel-modal textarea {
+#login-panel-modal input, textarea {
   display: block;
   width: 100%;
   margin: 10px 0;
@@ -178,12 +187,10 @@ body {
   border-radius: 5px;
   box-sizing: border-box;
 }
-
-#admin-panel-modal textarea {
+textarea {
   resize: vertical;
   min-height: fit-content;
   max-height: 7em;
-  width: 100%;
 }
 
 #admin-panel-modal form button,
@@ -316,6 +323,7 @@ body {
   text-decoration: none;
   cursor: pointer;
   user-select: none;
+  -webkit-user-drag: none;
   margin: 0 auto;
   display: flex;
   flex-direction: row;
@@ -328,9 +336,9 @@ body {
 .item-card:hover {
   transform: translateY(-6px);
 }
-
 .item-card img {
   pointer-events: none;
+  -webkit-user-drag: none;
   display: block;
 }
 
@@ -351,7 +359,7 @@ body {
 .rarity-image {
   max-height: 100px;
   margin-bottom: 6px;
-  image-rendering: pixelated;
+    image-rendering: pixelated;
 }
 
 .item-name {
@@ -369,10 +377,14 @@ body {
 
 .item-stats {
   color: #ddd;
-  border-top: 1px solid #333;
+  border-top: 1px solid #592A01;
   padding-top: 6px;
   font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
 #item-stats {
 background-color: #2c2c2c;
 resize: vertical;
@@ -463,14 +475,13 @@ width: 99%;
 
 .edit-fields input,
 .edit-fields textarea {
-  --font-size: .8rem;
   width: 100%;
-  margin-top: calc(.25 * var(--font-size));
+  margin-top: 4px;
   background-color: #1e1e1e;
   color: #ccc;
   border: 1px solid #555;
   padding: 6px;
-  font-size: var(--font-size);
+  font-size: 0.8rem;
   border-radius: 4px;
 }
 
@@ -498,6 +509,7 @@ width: 99%;
   margin-top: 1rem;
   width: 20%;
   padding: 10px;
+  font-size: 0.95rem;
   background-color: #333;
   color: #fff;
   border: 1px solid #555;
@@ -560,7 +572,61 @@ width: 99%;
   font-size: 0.85rem;
   color: #bbb;
 }
+.item-expandable-details {
+  display: none;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px solid #333;
+  color: #ccc;
+  white-space: pre-line;
+}
 
+.expand-toggle-btn {
+  margin-top: 8px;
+  padding: 4px 10px;
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.expand-toggle-btn:hover {
+  background-color: #444;
+}
+.inline-emoji {
+  display: inline-block;
+  height: 1em;
+  width: auto;
+  vertical-align: text-bottom;
+  image-rendering: pixelated;
+  margin: 0 2px;
+}
+.item-stats {
+  white-space: nowrap;
+  overflow-x: auto;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.item-stats img {
+  display: inline-block !important;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+
+.inline-emoji {
+  display: inline-block !important;
+  height: 1em;
+  width: auto;
+  vertical-align: middle;
+  image-rendering: pixelated;
+  margin: 0 2px;
+  line-height: 1;
+}
 a.discord {
   background: #1e1e1e;
   mask-image: url("../assets/Discord-Symbol-White.svg");
