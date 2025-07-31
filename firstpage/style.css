@@ -5,8 +5,7 @@ body {
   margin: 0;
   font-family: sans-serif;
   background-color: #121212;
-  color: #ffffff;
-  overflow-x: hidden;
+  color: #fff;
 }
 
 .main-content {
@@ -21,7 +20,6 @@ body {
 }
 
 .banner {
-  background-color: #121212;
   padding: 1rem 0;
   display: flex;
   justify-content: center;
@@ -32,14 +30,7 @@ body {
 }
 
 .banner-image {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
   max-height: 150px;
-  display: block;
-  margin: 0 auto;
-  object-fit: contain;
-  box-sizing: border-box;
 }
 
 .cards-wrapper {
@@ -176,7 +167,7 @@ body {
 }
 
 #admin-panel-modal input,
-#login-panel-modal input, textarea {
+#login-panel-modal input, #admin-panel-modal textarea {
   display: block;
   width: 100%;
   margin: 10px 0;
@@ -187,10 +178,12 @@ body {
   border-radius: 5px;
   box-sizing: border-box;
 }
-textarea {
+
+#admin-panel-modal textarea {
   resize: vertical;
   min-height: fit-content;
   max-height: 7em;
+  width: 100%;
 }
 
 #admin-panel-modal form button,
@@ -323,7 +316,6 @@ textarea {
   text-decoration: none;
   cursor: pointer;
   user-select: none;
-  -webkit-user-drag: none;
   margin: 0 auto;
   display: flex;
   flex-direction: row;
@@ -336,9 +328,9 @@ textarea {
 .item-card:hover {
   transform: translateY(-6px);
 }
+
 .item-card img {
   pointer-events: none;
-  -webkit-user-drag: none;
   display: block;
 }
 
@@ -359,7 +351,7 @@ textarea {
 .rarity-image {
   max-height: 100px;
   margin-bottom: 6px;
-    image-rendering: pixelated;
+  image-rendering: pixelated;
 }
 
 .item-name {
@@ -471,13 +463,14 @@ width: 99%;
 
 .edit-fields input,
 .edit-fields textarea {
+  --font-size: .8rem;
   width: 100%;
-  margin-top: 4px;
+  margin-top: calc(.25 * var(--font-size));
   background-color: #1e1e1e;
   color: #ccc;
   border: 1px solid #555;
   padding: 6px;
-  font-size: 0.8rem;
+  font-size: var(--font-size);
   border-radius: 4px;
 }
 
@@ -505,7 +498,6 @@ width: 99%;
   margin-top: 1rem;
   width: 20%;
   padding: 10px;
-  font-size: 0.95rem;
   background-color: #333;
   color: #fff;
   border: 1px solid #555;
