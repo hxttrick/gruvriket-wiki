@@ -15,6 +15,9 @@
         <img src="../assets/gruvriket3.png" alt="Banner" class="banner-image">
       </a>
     </header>
+
+    <!-- Search is injected by JS -->
+
     <main class="cards-wrapper">
       <div class="cards-container items-view" id="cards-container"></div>
     </main>
@@ -28,6 +31,7 @@
     </div>
   </footer>
 
+  <!-- Admin Login Modal -->
   <section id="login-panel-wrapper" style="display: none;">
     <div id="login-panel-overlay"></div>
     <div id="login-panel-modal">
@@ -43,6 +47,7 @@
     </div>
   </section>
 
+  <!-- Admin Panel Modal -->
   <section id="admin-panel-wrapper" style="display: none;">
     <div id="admin-panel-overlay"></div>
     <div id="admin-panel-modal">
@@ -63,6 +68,7 @@
           <input type="text" id="item-flavor" placeholder="Flavor Text" />
           <textarea id="item-stats" placeholder="Stats or Description"></textarea>
           <input type="text" id="item-tags" placeholder="Tags (comma-separated)" />
+          <textarea id="item-details" placeholder="Expandable Details (optional)"></textarea>
           <button type="submit">Add Item</button>
         </form>
         <div id="item-list" style="margin-top: 1rem;"></div>
@@ -73,6 +79,7 @@
   </section>
 
   <script src="../firstpage/fpage.js"></script>
+  <script src="../firstpage/emoteIcons.js"></script>
   <script src="category.js"></script>
 </body>
 </html>

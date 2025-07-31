@@ -28,23 +28,69 @@ function renderFilteredItems(query) {
   filtered.forEach(data => {
     const card = document.createElement("div");
     card.className = "item-card";
+
     card.innerHTML = `
       <div class="item-image">
         <img src="${getImageSrc(data.image)}" alt="${data.name}" draggable="false">
       </div>
-      <div class="item-info">
-        <img src="${getImageSrc(data.rarity)}" class="rarity-image" alt="rarity">
-        <div class="item-name">${data.name}</div>
-        <div class="item-flavor">${data.flavor || ""}</div>
-        <div class="item-stats">${data.stats || ""}</div>
-        <div class="item-tags">
-          ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ")}
-        </div>
-      </div>
     `;
+
+    const itemInfo = document.createElement("div");
+    itemInfo.className = "item-info";
+
+    const rarity = document.createElement("img");
+    rarity.className = "rarity-image";
+    rarity.src = getImageSrc(data.rarity);
+    rarity.alt = "rarity";
+
+    const name = document.createElement("div");
+    name.className = "item-name";
+    name.textContent = data.name;
+
+    const flavor = document.createElement("div");
+    flavor.className = "item-flavor";
+    flavor.innerHTML = parseEmojis(data.flavor || "");
+
+    const stats = document.createElement("div");
+    stats.className = "item-stats";
+stats.innerHTML = parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").replace(/\s+/g, " "));
+
+
+    const tags = document.createElement("div");
+    tags.className = "item-tags";
+    tags.innerHTML = (data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ");
+
+    itemInfo.appendChild(rarity);
+    itemInfo.appendChild(name);
+    itemInfo.appendChild(flavor);
+    itemInfo.appendChild(stats);
+    itemInfo.appendChild(tags);
+
+    if (data.details && data.details.trim()) {
+      const toggleBtn = document.createElement("button");
+      toggleBtn.className = "expand-toggle-btn";
+      toggleBtn.textContent = "Visa mer";
+
+      const expandable = document.createElement("div");
+      expandable.className = "item-expandable-details";
+      expandable.innerHTML = parseEmojis(data.details);
+      expandable.style.display = "none";
+
+      toggleBtn.onclick = () => {
+        const visible = expandable.style.display === "block";
+        expandable.style.display = visible ? "none" : "block";
+        toggleBtn.textContent = visible ? "Visa mer" : "Dölj";
+      };
+
+      itemInfo.appendChild(toggleBtn);
+      itemInfo.appendChild(expandable);
+    }
+
+    card.appendChild(itemInfo);
     container.appendChild(card);
   });
 }
+
 
 function loadItems() {
   const categoryId = getQueryParam("id");
@@ -97,6 +143,9 @@ function loadItems() {
               <label>Tags (comma-separated)</label>
               <input type="text" class="edit-tags" value="${(data.tags || []).join(", ")}" />
 
+              <label>Details (expandable section)</label>
+              <textarea class="edit-details">${data.details || ""}</textarea>
+
               <button class="save-edit">Save</button>
             </div>
           `;
@@ -112,8 +161,9 @@ function loadItems() {
               image: itemDiv.querySelector(".edit-image").value,
               rarity: itemDiv.querySelector(".edit-rarity").value,
               flavor: itemDiv.querySelector(".edit-flavor").value,
-              stats: itemDiv.querySelector(".edit-stats").value,
+              stats: itemDiv.querySelector(".edit-stats").value.trim().replace(/\s+/g, " "),
               tags: itemDiv.querySelector(".edit-tags").value.split(",").map(t => t.trim()).filter(Boolean),
+              details: itemDiv.querySelector(".edit-details").value
             };
             db.collection("itemsinfo").doc(doc.id).update(updates).then(loadItems);
           };
@@ -229,7 +279,7 @@ if (categoryId) {
   setupAdminPanel(
     loadItems,
     "add-item-form",
-    ["item-name", "item-image", "item-rarity", "item-flavor", "item-stats", "item-tags"],
+    ["item-name", "item-image", "item-rarity", "item-flavor", "item-stats", "item-tags", "item-details"],
     "itemsinfo",
     { category: categoryId }
   );
