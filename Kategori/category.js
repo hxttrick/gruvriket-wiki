@@ -8,6 +8,44 @@ function getQueryParam(name) {
   return urlParams.get(name);
 }
 
+let currentItems = [];
+
+function getSearchParam() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get("search") || "";
+}
+
+function renderFilteredItems(query) {
+  const container = document.getElementById("cards-container");
+  container.innerHTML = "";
+
+  const filtered = currentItems.filter(item =>
+    item.name.toLowerCase().includes(query.toLowerCase()) ||
+    (item.flavor && item.flavor.toLowerCase().includes(query.toLowerCase())) ||
+    (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase())))
+  );
+
+  filtered.forEach(data => {
+    const card = document.createElement("div");
+    card.className = "item-card";
+    card.innerHTML = `
+      <div class="item-image">
+        <img src="${getImageSrc(data.image)}" alt="${data.name}" draggable="false">
+      </div>
+      <div class="item-info">
+        <img src="${getImageSrc(data.rarity)}" class="rarity-image" alt="rarity">
+        <div class="item-name">${data.name}</div>
+        <div class="item-flavor">${data.flavor || ""}</div>
+        <div class="item-stats">${data.stats || ""}</div>
+        <div class="item-tags">
+          ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ")}
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
 function loadItems() {
   const categoryId = getQueryParam("id");
   const container = document.getElementById("cards-container");
@@ -22,27 +60,10 @@ function loadItems() {
     .orderBy("order")
     .get()
     .then(snapshot => {
+      currentItems = [];
       snapshot.forEach((doc, index) => {
         const data = doc.data();
-
-        const card = document.createElement("div");
-        card.className = "item-card";
-
-        card.innerHTML = `
-          <div class="item-image">
-            <img src="${getImageSrc(data.image)}" alt="${data.name}" draggable="false">
-          </div>
-          <div class="item-info">
-            <img src="${getImageSrc(data.rarity)}" class="rarity-image" alt="rarity">
-            <div class="item-name">${data.name}</div>
-            <div class="item-flavor">${data.flavor || ""}</div>
-            <div class="item-stats">${data.stats || ""}</div>
-            <div class="item-tags">
-              ${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ")}
-            </div>
-          </div>
-        `;
-        container.appendChild(card);
+        currentItems.push(data);
 
         if (adminList) {
           const itemDiv = document.createElement("div");
@@ -57,27 +78,27 @@ function loadItems() {
               <button class="edit-item">Edit</button>
               <button onclick="deleteItem('${doc.id}')">Delete</button>
             </div>
-<div class="edit-fields" style="display: none; margin-top: 10px;">
-  <label>Name</label>
-  <input type="text" class="edit-name" value="${data.name || ""}" placeholder="Item Name" />
+            <div class="edit-fields" style="display: none; margin-top: 10px;">
+              <label>Name</label>
+              <input type="text" class="edit-name" value="${data.name || ""}" />
 
-  <label>Image URL or filename</label>
-  <input type="text" class="edit-image" value="${data.image || ""}" placeholder="e.g., sword.png" />
+              <label>Image</label>
+              <input type="text" class="edit-image" value="${data.image || ""}" />
 
-  <label>Rarity Image</label>
-  <input type="text" class="edit-rarity" value="${data.rarity || ""}" placeholder="e.g., rare.png" />
+              <label>Rarity</label>
+              <input type="text" class="edit-rarity" value="${data.rarity || ""}" />
 
-  <label>Flavor Text</label>
-  <input type="text" class="edit-flavor" value="${data.flavor || ""}" placeholder="Optional flavor text..." />
+              <label>Flavor Text</label>
+              <input type="text" class="edit-flavor" value="${data.flavor || ""}" />
 
-  <label>Stats or Description</label>
-  <textarea class="edit-stats" placeholder="Item stats or lore...">${data.stats || ""}</textarea>
+              <label>Stats</label>
+              <textarea class="edit-stats">${data.stats || ""}</textarea>
 
-  <label>Tags (comma-separated)</label>
-  <input type="text" class="edit-tags" value="${(data.tags || []).join(", ")}" placeholder="e.g., rare, magic" />
+              <label>Tags (comma-separated)</label>
+              <input type="text" class="edit-tags" value="${(data.tags || []).join(", ")}" />
 
-  <button class="save-edit">Save</button>
-</div>
+              <button class="save-edit">Save</button>
+            </div>
           `;
 
           itemDiv.querySelector(".edit-item").onclick = () => {
@@ -101,6 +122,7 @@ function loadItems() {
         }
       });
 
+      renderFilteredItems(document.getElementById("item-search")?.value || "");
       if (adminList) enableDragAndDrop();
     });
 }
@@ -212,4 +234,15 @@ if (categoryId) {
     { category: categoryId }
   );
   loadItems();
+
+  const searchInput = document.createElement("input");
+  searchInput.type = "text";
+  searchInput.id = "item-search";
+  searchInput.placeholder = "Hitta vad du letar efter i denna kategori...";
+  searchInput.className = "search-input";
+  document.querySelector(".main-content").insertBefore(searchInput, document.querySelector(".cards-wrapper"));
+
+  searchInput.addEventListener("input", e => {
+    renderFilteredItems(e.target.value);
+  });
 }
