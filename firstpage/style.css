@@ -560,3 +560,22 @@ width: 99%;
   font-size: 0.85rem;
   color: #bbb;
 }
+
+a.discord {
+  background: #1e1e1e;
+  mask-image: url("../assets/Discord-Symbol-White.svg");
+  mask-repeat: no-repeat;
+  mask-position: 50% 50%;
+  width: 2rem;
+  aspect-ratio: 4/3;
+  display: block;
+  transition: background-color .2s ease;
+  position: absolute;
+  right: 2rem;
+  top: 50%;
+  translate: 0 -50%;
+
+  &:hover {
+    background-color: #5865f2;
+  }
+}
