@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Credits</title>
+  <link rel="stylesheet" href="../firstpage/style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="main-content">
+    <header class="banner">
+      <a href="../firstpage/index.html">
+        <img src="../assets/gruvriket3.png" alt="Banner" class="banner-image">
+      </a>
+    </header>
+
+    <main class="cards-wrapper">
+      <div id="credits-container" class="cards-container items-view"></div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <p>© 2025 gruvriket.se</p>
+    <div class="admin-controls">
+      <button id="show-login-btn" style="display: none;">Admin Login</button>
+      <button id="open-admin-panel" style="display: none;">Admin Panel</button>
+    </div>
+    <a href="https://discord.com/invite/XQHVGYsa4P" target="_blank" class="discord"></a>
+  </footer>
+
+  <section id="login-panel-wrapper" style="display: none;">
+    <div id="login-panel-overlay"></div>
+    <div id="login-panel-modal">
+      <div class="admin-header">
+        <h3>Admin Login</h3>
+        <button id="close-login-modal" class="modal-close-btn">×</button>
+      </div>
+      <form id="login-form">
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="admin-panel-wrapper" style="display: none;">
+    <div id="admin-panel-overlay"></div>
+    <div id="admin-panel-modal">
+      <div class="admin-header">
+        <h3>Admin Panel</h3>
+        <button id="close-admin-modal" class="modal-close-btn">×</button>
+      </div>
+
+      <form id="add-credit-form">
+        <input type="text" id="credit-name" placeholder="Namn på person" required />
+        <input type="text" id="credit-role" placeholder="Roll (under namnet)" required />
+        <input type="text" id="credit-info" placeholder="Vad har personen gjort" required />
+        <input type="text" id="credit-image" placeholder="Minecraft användarnamn" required />
+        <input type="text" id="credit-section" placeholder="Kategori som de tillhör ex: Ägare, Kodare m.m.." required />
+        <button type="submit">Add Contributor</button>
+      </form>
+
+      <div id="credit-list"></div>
+      <button id="logout-btn">Logout</button>
+    </div>
+  </section>
+
+  <script src="../firstpage/fpage.js"></script>
+  <script src="../firstpage/emoteIcons.js"></script>
+  <script src="credits.js"></script>
+</body>
+</html>
