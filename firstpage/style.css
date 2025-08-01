@@ -930,29 +930,37 @@ a.discord {
   color: #ddd;
   text-wrap: auto;
 }
- @font-face {
-      font-family: 'RetroComputer';
-      src: url('assets/fonts/retro_computer.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
+@font-face {
+  font-family: 'RetroComputer';
+  src: url('assets/fonts/retro_computer.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-    .mc-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;       
-      text-align: center;        
+.mc-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;       
+  text-align: center;        
 
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-family: 'RetroComputer', monospace;
-      font-size: 16px;
-      line-height: 1.2;
-      gap: 8px;
-      max-width: fit-content;
-      margin: 0 auto;            
-    }
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-family: 'RetroComputer', monospace;
+  font-size: 16px;
+  line-height: 1.2;
+  gap: 8px;
+  max-width: fit-content;
+  margin: 0 auto;            
+}
 
-    .mc-section {
-      white-space: nowrap;
-    }
+.mc-section {
+  white-space: nowrap;
+}
+
+span.chatgpt {
+  position: absolute;
+  top: 0;
+  right: 0;
+  translate: -.125rem -100%;
+  opacity: .1;
+}
