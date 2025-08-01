@@ -80,24 +80,34 @@ function loadCategories() {
         };
 
         const editForm = document.createElement("form");
-        editForm.innerHTML = `
-          <input type="text" placeholder="Namn på Kategori" value="${data.title}" style="margin-bottom: 4px; display: block; width: 100%;" />
-          <input type="text" placeholder="URL eller filnamn *placeholder.png*" value="${data.image}" style="margin-bottom: 4px; display: block; width: 100%;" />
-          <input type="text" placeholder="Länk till Kategori" value="${data.link}" style="margin-bottom: 4px; display: block; width: 100%;" />
-          <button type="submit" style="margin-top: 4px;">Spara</button>
-        `;
+editForm.innerHTML = `
+  <input type="text" placeholder="Namn på Kategori" value="${data.title}" style="margin-bottom: 4px; display: block; width: 100%;" />
+  <input type="text" placeholder="URL eller filnamn *placeholder.png*" value="${data.image}" style="margin-bottom: 4px; display: block; width: 100%;" />
+  <input type="text" placeholder="Länk till Kategori" value="${data.link}" style="margin-bottom: 4px; display: block; width: 100%;" />
+  <input type="text" placeholder="Taggar (komma-separerade)" value="${(data.tags || []).join(", ")}" style="margin-bottom: 4px; display: block; width: 100%;" />
+  <button type="submit" style="margin-top: 4px;">Spara</button>
+`;
 
         editForm.addEventListener("submit", e => {
-          e.preventDefault();
-          const [titleInput, imageInput, linkInput] = editForm.querySelectorAll("input");
-          db.collection("categories").doc(doc.id).update({
-            title: titleInput.value.trim(),
-            image: imageInput.value.trim(),
-            link: linkInput.value.trim()
-          }).then(() => {
-            loadCategories();
-          });
-        });
+  e.preventDefault();
+  const [titleInput, imageInput, linkInput, tagsInput] = editForm.querySelectorAll("input");
+  const title = titleInput.value.trim();
+  const image = imageInput.value.trim();
+  const link = linkInput.value.trim();
+  const tags = tagsInput.value.trim().toLowerCase().split(",").map(tag => tag.trim()).filter(Boolean);
+  const searchIndex = [title.toLowerCase(), ...tags];
+
+  db.collection("categories").doc(doc.id).update({
+    title,
+    image,
+    link,
+    tags,
+    searchIndex
+  }).then(() => {
+    loadCategories();
+  });
+});
+
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "Radera";
@@ -257,13 +267,15 @@ document.querySelectorAll(".admin-tab").forEach(tab => {
 
 document.getElementById("add-category-form").addEventListener("submit", e => {
   e.preventDefault();
-  const title = document.getElementById("category-title").value;
-  const image = document.getElementById("category-image").value;
-  const link = document.getElementById("category-link").value;
+  const title = document.getElementById("category-title").value.trim();
+  const image = document.getElementById("category-image").value.trim();
+  const link = document.getElementById("category-link").value.trim();
+  const tags = document.getElementById("category-tags").value.trim().toLowerCase().split(",").map(tag => tag.trim()).filter(Boolean);
+  const searchIndex = [title.toLowerCase(), ...tags];
 
   db.collection("categories").orderBy("order", "desc").limit(1).get().then(snapshot => {
     const maxOrder = snapshot.empty ? 0 : (snapshot.docs[0].data().order || 0) + 1;
-    db.collection("categories").add({ title, image, link, order: maxOrder }).then(() => {
+    db.collection("categories").add({ title, image, link, tags, searchIndex, order: maxOrder }).then(() => {
       loadCategories();
       document.getElementById("add-category-form").reset();
     });
@@ -278,5 +290,108 @@ document.getElementById("logout-btn").addEventListener("click", () => {
     adminWrapper.style.display = "none";
   });
 });
+const searchInput = document.getElementById("global-search");
+const searchModal = document.getElementById("search-modal");
+
+searchInput.addEventListener("input", async () => {
+  const query = searchInput.value.trim().toLowerCase();
+  searchModal.innerHTML = "";
+  if (!query) {
+    searchModal.style.display = "none";
+    return;
+  }
+
+  try {
+    const [itemsSnap, metaSnap] = await Promise.all([
+      db.collection("itemsinfo").get(),
+      db.collection("categoryMeta").get()
+    ]);
+
+    const categoryMetaMap = {};
+    metaSnap.forEach(doc => {
+      const data = doc.data();
+      categoryMetaMap[doc.id] = data.displayName || doc.id;
+    });
+
+    const matches = [];
+    itemsSnap.forEach(doc => {
+      const data = doc.data();
+      if (
+        data.name?.toLowerCase().includes(query) ||
+        data.flavor?.toLowerCase().includes(query) ||
+        (data.tags || []).some(tag => tag.toLowerCase().includes(query))
+      ) {
+        matches.push({ id: doc.id, ...data });
+      }
+    });
+
+    if (matches.length === 0) {
+      searchModal.style.display = "none";
+      return;
+    }
+
+    matches.forEach(match => {
+      const categoryId = match.category;
+      const displayName = categoryMetaMap[categoryId] || "Okänd kategori";
+
+      const result = document.createElement("div");
+      result.className = "search-result";
+      result.style.display = "flex";
+      result.style.justifyContent = "space-between";
+      result.style.alignItems = "center";
+      result.style.imageRendering = "pixelated";
+
+      const textContainer = document.createElement("div");
+      textContainer.innerHTML = `
+        <div class="search-result-title" style="font-weight: bold;">${match.name}</div>
+        <div class="search-result-category" style="font-size: 0.85em; color: #666;">${displayName}</div>
+      `;
+
+      const image = document.createElement("img");
+      image.src = getImageSrc(match.image || "");
+      image.alt = match.name;
+      image.style.width = "40px";
+      image.style.height = "40px";
+      image.style.objectFit = "contain";
+      image.style.marginLeft = "10px";
+
+      result.appendChild(textContainer);
+      result.appendChild(image);
+
+      result.onclick = () => {
+        const link = `/Kategori/category.html?id=${categoryId}`;
+        window.location.href = link;
+      };
+
+      searchModal.appendChild(result);
+    });
+
+    searchModal.style.display = "block";
+  } catch (err) {
+    console.error("Search failed:", err);
+    searchModal.style.display = "none";
+  }
+});
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search-wrapper")) {
+    searchModal.style.display = "none";
+  }
+});
+    const serverIP = "mc.gruvriket.se";
+
+    fetch(`https://api.mcsrvstat.us/2/${serverIP}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("motd").innerText = data.motd?.clean?.join(" ") || "N/A";
+        document.getElementById("players").innerText = data.players
+          ? `${data.players.online} / ${data.players.max}`
+          : "N/A";
+      })
+      .catch(err => {
+        document.getElementById("motd").innerText = "Error";
+        document.getElementById("players").innerText = "Error";
+        console.error(err);
+      });
 
 loadCategories();
