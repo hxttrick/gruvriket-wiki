@@ -27,8 +27,8 @@ const emojiMap = {
 function parseEmojis(text) {
   if (!text) return "";
   return text
-    .replace(/\r?\n|\r/g, " ")                    // remove newlines
-    .replace(/\s+/g, " ")                         // collapse multiple spaces
+    .replace(/\r?\n|\r/g, " ")                   
+    .replace(/\s+/g, " ")                         
     .replace(/:\w+:/g, match => {
       const src = emojiMap[match];
       return src ? `<img src="${src}" alt="${match}" class="inline-emoji">` : match;

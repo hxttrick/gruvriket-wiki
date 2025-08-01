@@ -377,7 +377,7 @@ textarea {
 
 .item-stats {
   color: #ddd;
-  border-top: 1px solid #592A01;
+  border-top: 2px solid #4f3627;
   padding-top: 6px;
   font-size: 0.95rem;
   white-space: nowrap;
@@ -577,7 +577,7 @@ width: 99%;
   font-size: 0.9rem;
   margin-top: 10px;
   padding-top: 6px;
-  border-top: 1px solid #333;
+  border-top: 1px solid #4f3627;
   color: #ccc;
   white-space: pre-line;
 }
@@ -644,4 +644,161 @@ a.discord {
   &:hover {
     background-color: #5865f2;
   }
+}
+#item-modal-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: none;
+}
+
+#item-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#item-modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #1e1e1e;
+  color: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 40rem;
+  width: 90%;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3);
+  font-size: 1rem;
+}
+
+#item-modal-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 2rem;
+  background: none;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.item-expandable-preview {
+  font-size: 1rem;
+  color: #bbbbbb;
+  margin-top: 1rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.modal-tags {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.modal-tags .tag {
+  background-color: #333333;
+  color: #cccccc;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  display: inline-block;
+  line-height: 1.5;
+}
+
+#item-modal-body h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+#item-modal-body p {
+  margin: 1rem 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+#item-modal-body img {
+  max-height: 4rem;
+  margin-bottom: 1rem;
+  image-rendering: pixelated;
+}
+.expanded-card-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.expanded-card {
+  background-color: #1e1e1e;
+  border-radius: 1rem;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  max-width: 48rem;
+  width: 90%;
+  box-sizing: border-box;
+  transform-origin: center;
+  animation: scaleIn 0.2s ease-in-out;
+}
+
+.expanded-card img {
+  max-width: 30rem;
+  border-radius: 0.5rem;
+  image-rendering: pixelated;
+}
+.expanded-card .rarity-image {
+  display: block;
+  margin: 0 0 1rem 2rem;
+  max-height: 3rem;
+  image-rendering: pixelated;
+}
+.expanded-card .item-info {
+  flex: 1;
+}
+
+.expanded-card .item-expandable-details {
+  display: block;
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: #ccc;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.expanded-card .item-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+    align-items: center;
+  text-align: center;
+}
+
+.expanded-card .item-flavor {
+  font-size: 1rem;
+  font-style: italic;
+  color: #cccccc;
+  margin-bottom: 1rem;
+    align-items: center;
+  text-align: center;
 }
