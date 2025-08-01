@@ -274,6 +274,10 @@ textarea {
 
 #category-list {
   margin-top: 1rem;
+  max-height: 300px;        /* Controls the scrollable height */
+  overflow-y: auto;         /* Enables vertical scrolling */
+  padding-right: 6px;       /* Optional: Avoid scrollbar overlap */
+  border: 1px solid #333;   /* Optional: for visual boundary */
 }
 
 #category-list > div {

@@ -84,7 +84,6 @@ editForm.innerHTML = `
   <input type="text" placeholder="Namn på Kategori" value="${data.title}" style="margin-bottom: 4px; display: block; width: 100%;" />
   <input type="text" placeholder="URL eller filnamn *placeholder.png*" value="${data.image}" style="margin-bottom: 4px; display: block; width: 100%;" />
   <input type="text" placeholder="Länk till Kategori" value="${data.link}" style="margin-bottom: 4px; display: block; width: 100%;" />
-  <input type="text" placeholder="Taggar (komma-separerade)" value="${(data.tags || []).join(", ")}" style="margin-bottom: 4px; display: block; width: 100%;" />
   <button type="submit" style="margin-top: 4px;">Spara</button>
 `;
 
