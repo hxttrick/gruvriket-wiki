@@ -628,7 +628,7 @@ width: 99%;
   line-height: 1;
 }
 a.discord {
-  background: #1e1e1e;
+  background: #444;
   mask-image: url("../assets/Discord-Symbol-White.svg");
   mask-repeat: no-repeat;
   mask-position: 50% 50%;
