@@ -66,25 +66,17 @@ stats.innerHTML = parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").repla
     itemInfo.appendChild(stats);
     itemInfo.appendChild(tags);
 
-    if (data.details && data.details.trim()) {
-      const toggleBtn = document.createElement("button");
-      toggleBtn.className = "expand-toggle-btn";
-      toggleBtn.textContent = "Visa mer";
+if (data.details && data.details.trim()) {
+  const previewText = document.createElement("div");
+  previewText.className = "item-expandable-preview";
+  const short = data.details.slice(0, 80).trim(); // truncate to ~80 chars
+  previewText.innerHTML = parseEmojis(short + (short.length < data.details.length ? "..." : ""));
+  itemInfo.appendChild(previewText);
 
-      const expandable = document.createElement("div");
-      expandable.className = "item-expandable-details";
-      expandable.innerHTML = parseEmojis(data.details);
-      expandable.style.display = "none";
-
-      toggleBtn.onclick = () => {
-        const visible = expandable.style.display === "block";
-        expandable.style.display = visible ? "none" : "block";
-        toggleBtn.textContent = visible ? "Visa mer" : "Dölj";
-      };
-
-      itemInfo.appendChild(toggleBtn);
-      itemInfo.appendChild(expandable);
-    }
+card.addEventListener("click", () => {
+  openExpandedCard(data);
+});
+}
 
     card.appendChild(itemInfo);
     container.appendChild(card);
@@ -295,4 +287,50 @@ if (categoryId) {
   searchInput.addEventListener("input", e => {
     renderFilteredItems(e.target.value);
   });
+}
+function openExpandedCard(data) {
+  closeExpandedCard();
+
+  const overlay = document.createElement("div");
+  overlay.className = "expanded-card-overlay";
+
+  const card = document.createElement("div");
+  card.className = "expanded-card";
+
+  card.innerHTML = `
+    <div class="item-image">
+      <img src="${getImageSrc(data.image)}" alt="${data.name}">
+    </div>
+    <div class="item-info">
+      <img class="rarity-image" src="${getImageSrc(data.rarity)}" alt="rarity">
+      <div class="item-name">${data.name}</div>
+      <div class="item-flavor">${parseEmojis(data.flavor || "")}</div>
+      <div class="item-stats">${parseEmojis(data.stats || "")}</div>
+      <div class="item-tags">${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ")}</div>
+      <div class="item-expandable-details">${parseEmojis(data.details || "")}</div>
+    </div>
+  `;
+
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) closeExpandedCard();
+  });
+
+  document.addEventListener("keydown", escHandler);
+}
+
+function closeExpandedCard() {
+  const existing = document.querySelector(".expanded-card-overlay");
+  if (existing) {
+    existing.remove();
+    document.removeEventListener("keydown", escHandler);
+  }
+}
+
+function escHandler(e) {
+  if (e.key === "Escape") {
+    closeExpandedCard();
+  }
 }
