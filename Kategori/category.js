@@ -31,9 +31,10 @@ function renderFilteredItems(query) {
 
     card.innerHTML = `
       <div class="item-image">
-        <img src="${getImageSrc(data.image)}" alt="${data.name}" draggable="false">
+        <div class="img" style="background-image: url(${getImageSrc(data.image)})"></div>
       </div>
     `;
+    //<img src="${getImageSrc(data.image)}" alt="${data.name}" draggable="false">
 
     const itemInfo = document.createElement("div");
     itemInfo.className = "item-info";
@@ -53,7 +54,7 @@ function renderFilteredItems(query) {
 
     const stats = document.createElement("div");
     stats.className = "item-stats";
-stats.innerHTML = parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").replace(/\s+/g, " "));
+    stats.innerHTML = parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").replace(/\s+/g, " "));
 
 
     const tags = document.createElement("div");
@@ -66,19 +67,21 @@ stats.innerHTML = parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").repla
     itemInfo.appendChild(stats);
     itemInfo.appendChild(tags);
 
-if (data.details && data.details.trim()) {
-  const previewText = document.createElement("div");
-  previewText.className = "item-expandable-preview";
-  const short = data.details.slice(0, 80).trim(); // truncate to ~80 chars
-  previewText.innerHTML = parseEmojis(short + (short.length < data.details.length ? "..." : ""));
-  itemInfo.appendChild(previewText);
-
-card.addEventListener("click", () => {
-  openExpandedCard(data);
-});
-}
-
     card.appendChild(itemInfo);
+
+    if (data.details && data.details.trim()) {
+      const description = document.createElement("div");
+      description.className = "item-description";
+      const short = data.details.slice(0, 80).trim(); // truncate to ~80 chars
+      description.innerHTML = parseEmojis(short + (short.length < data.details.length ? "..." : ""));
+
+      card.appendChild(description);
+
+      card.addEventListener("click", () => {
+        openExpandedCard(data);
+      });
+    }
+
     container.appendChild(card);
   });
 }
@@ -299,7 +302,7 @@ function openExpandedCard(data) {
 
   card.innerHTML = `
     <div class="item-image">
-      <img src="${getImageSrc(data.image)}" alt="${data.name}">
+      <div class="img" style="background-image: url(${getImageSrc(data.image)})"></div>
     </div>
     <div class="item-info">
       <img class="rarity-image" src="${getImageSrc(data.rarity)}" alt="rarity">
@@ -307,9 +310,10 @@ function openExpandedCard(data) {
       <div class="item-flavor">${parseEmojis(data.flavor || "")}</div>
       <div class="item-stats">${parseEmojis(data.stats || "")}</div>
       <div class="item-tags">${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ")}</div>
-      <div class="item-expandable-details">${parseEmojis(data.details || "")}</div>
+      <div class="item-description">${parseEmojis(data.details || "")}</div>
     </div>
   `;
+  //<img src="${getImageSrc(data.image)}" alt="${data.name}">
 
   overlay.appendChild(card);
   document.body.appendChild(overlay);
