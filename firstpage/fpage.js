@@ -7,12 +7,17 @@ const firebaseConfig = {
   apiKey: "AIzaSyBImRk-6VfPZB_kISi-pwdUAdUo1z3aZ0A",
   authDomain: "gruvriketwiki.firebaseapp.com",
   projectId: "gruvriketwiki",
-  storageBucket: "gruvriketwiki.firebasestorage.app",
+  storageBucket: "gruvriketwiki.appspot.com",
   messagingSenderId: "926051664418",
   appId: "1:926051664418:web:9c903d84815b9e5538c07b"
 };
 
-firebase.initializeApp(firebaseConfig);
+try {
+  firebase.initializeApp(firebaseConfig);
+} catch (e) {
+  console.warn("Firebase already initialized:", e);
+}
+
 const db = firebase.firestore();
 const auth = firebase.auth();
 
@@ -27,7 +32,7 @@ function loadCategories() {
   container.innerHTML = "";
   if (adminList) adminList.innerHTML = "";
 
-  db.collection("categories").get().then(snapshot => {
+  db.collection("categories").orderBy("order", "asc").get().then(snapshot => {
     snapshot.forEach(doc => {
       const data = doc.data();
 
@@ -44,9 +49,13 @@ function loadCategories() {
 
       if (adminList) {
         const row = document.createElement("div");
+        row.classList.add("draggable-item");
+        row.setAttribute("draggable", "true");
+        row.dataset.id = doc.id;
         row.style.border = "1px solid #333";
         row.style.padding = "10px";
         row.style.marginBottom = "12px";
+        row.style.cursor = "grab";
 
         const header = document.createElement("div");
         header.style.display = "flex";
@@ -112,8 +121,73 @@ function loadCategories() {
         adminList.appendChild(row);
       }
     });
+
+    if (adminList) enableCategoryReordering(); // ensure it's called after DOM update
+  }).catch(err => {
+    console.error("Failed to load categories:", err);
   });
 }
+
+function enableCategoryReordering() {
+  const list = document.getElementById("category-list");
+  let dragged;
+  const placeholder = document.createElement("div");
+  placeholder.className = "drag-placeholder";
+
+  list.addEventListener("dragstart", (e) => {
+    if (!e.target.classList.contains("draggable-item")) return;
+    dragged = e.target;
+    e.target.classList.add("dragging");
+    setTimeout(() => {
+      e.target.style.display = "none";
+    }, 0);
+  });
+
+  list.addEventListener("dragend", (e) => {
+    if (dragged) {
+      dragged.classList.remove("dragging");
+      dragged.style.display = "";
+    }
+    placeholder.remove();
+    dragged = null;
+  });
+
+  list.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const afterElement = [...list.children].find(el => {
+      const box = el.getBoundingClientRect();
+      return e.clientY < box.top + box.height / 2;
+    });
+
+    if (afterElement && afterElement !== placeholder) {
+      list.insertBefore(placeholder, afterElement);
+    } else if (!list.contains(placeholder)) {
+      list.appendChild(placeholder);
+    }
+  });
+
+  list.addEventListener("drop", async () => {
+    if (placeholder && dragged) {
+      list.insertBefore(dragged, placeholder);
+      placeholder.remove();
+    }
+
+    const newOrder = Array.from(list.children).map((el, index) => ({
+      id: el.dataset.id,
+      order: index
+    }));
+
+    const batch = db.batch();
+    newOrder.forEach(item => {
+      const ref = db.collection("categories").doc(item.id);
+      batch.update(ref, { order: item.order });
+    });
+
+    await batch.commit();
+    loadCategories();
+  });
+}
+
 
 function setAdminView(active) {
   const isLoggedIn = !!auth.currentUser;
@@ -125,20 +199,11 @@ function setAdminView(active) {
 
 function checkAdminByUID() {
   const user = auth.currentUser;
-  if (!user) {
-    setAdminView(false);
-    return;
-  }
+  if (!user) return setAdminView(false);
 
   db.collection("admins").doc(user.uid).get().then(doc => {
-    if (doc.exists) {
-      setAdminView(true);
-    } else {
-      setAdminView(false);
-    }
-  }).catch(() => {
-    setAdminView(false);
-  });
+    setAdminView(doc.exists);
+  }).catch(() => setAdminView(false));
 }
 
 auth.onAuthStateChanged(user => {
@@ -196,9 +261,12 @@ document.getElementById("add-category-form").addEventListener("submit", e => {
   const image = document.getElementById("category-image").value;
   const link = document.getElementById("category-link").value;
 
-  db.collection("categories").add({ title, image, link }).then(() => {
-    loadCategories();
-    document.getElementById("add-category-form").reset();
+  db.collection("categories").orderBy("order", "desc").limit(1).get().then(snapshot => {
+    const maxOrder = snapshot.empty ? 0 : (snapshot.docs[0].data().order || 0) + 1;
+    db.collection("categories").add({ title, image, link, order: maxOrder }).then(() => {
+      loadCategories();
+      document.getElementById("add-category-form").reset();
+    });
   });
 });
 
@@ -212,113 +280,3 @@ document.getElementById("logout-btn").addEventListener("click", () => {
 });
 
 loadCategories();
-
-function setupAdminPanel(loaderFn, formId, fieldIds, collection, extraData = {}) {
-  const form = document.getElementById(formId);
-  if (!form) return;
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const data = {};
-    fieldIds.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        const key = id.replace(/^item-/, "").replace(/^category-/, "");
-        data[key] = el.value.trim();
-      }
-    });
-    Object.assign(data, extraData);
-    db.collection(collection).add(data).then(() => {
-      loaderFn();
-      form.reset();
-    });
-  });
-}
-
-const searchInput = document.getElementById("global-search");
-const searchModal = document.getElementById("search-modal");
-
-searchInput.addEventListener("input", async () => {
-  const query = searchInput.value.trim().toLowerCase();
-  searchModal.innerHTML = "";
-  if (!query) {
-    searchModal.style.display = "none";
-    return;
-  }
-
-  try {
-    const [itemsSnap, metaSnap] = await Promise.all([
-      db.collection("itemsinfo").get(),
-      db.collection("categoryMeta").get()
-    ]);
-
-    const categoryMetaMap = {};
-    metaSnap.forEach(doc => {
-      const data = doc.data();
-      categoryMetaMap[doc.id] = data.displayName || doc.id;
-    });
-
-    const matches = [];
-    itemsSnap.forEach(doc => {
-      const data = doc.data();
-      if (
-        data.name?.toLowerCase().includes(query) ||
-        data.flavor?.toLowerCase().includes(query) ||
-        (data.tags || []).some(tag => tag.toLowerCase().includes(query))
-      ) {
-        matches.push({ id: doc.id, ...data });
-      }
-    });
-
-    if (matches.length === 0) {
-      searchModal.style.display = "none";
-      return;
-    }
-
-    matches.forEach(match => {
-      const categoryId = match.category;
-      const displayName = categoryMetaMap[categoryId] || "Okänd kategori";
-
-      const result = document.createElement("div");
-result.className = "search-result";
-result.style.display = "flex";
-result.style.justifyContent = "space-between";
-result.style.alignItems = "center";
-result.style.imageRendering = "pixelated";
-
-const textContainer = document.createElement("div");
-textContainer.innerHTML = `
-  <div class="search-result-title" style="font-weight: bold;">${match.name}</div>
-  <div class="search-result-category" style="font-size: 0.85em; color: #666;">${displayName}</div>
-`;
-
-const image = document.createElement("img");
-image.src = getImageSrc(match.image || "");
-image.alt = match.name;
-image.style.width = "40px";
-image.style.height = "40px";
-image.style.objectFit = "contain";
-image.style.marginLeft = "10px";
-
-result.appendChild(textContainer);
-result.appendChild(image);
-
-      result.onclick = () => {
-        const link = `/Kategori/category.html?id=${categoryId}`;
-        window.location.href = link;
-      };
-      searchModal.appendChild(result);
-    });
-
-    searchModal.style.display = "block";
-  } catch (err) {
-    console.error("Search failed:", err);
-    searchModal.style.display = "none";
-  }
-});
-
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".search-wrapper")) {
-    searchModal.style.display = "none";
-  }
-});
