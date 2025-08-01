@@ -962,5 +962,6 @@ span.chatgpt {
   top: 0;
   right: 0;
   translate: -.125rem -100%;
-  opacity: .1;
+  opacity: .02;
+  user-select: none;
 }
