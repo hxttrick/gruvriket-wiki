@@ -94,16 +94,27 @@ if (data.maplink) {
 }
     card.appendChild(itemInfo);
 
-    if (data.details && data.details.trim()) {
-      const description = document.createElement("div");
-      description.className = "item-description";
-      const short = data.details.slice(0, 80).trim();
-      description.innerHTML = parseWikiLinks(parseEmojis(short + (short.length < data.details.length ? "..." : "")));
-      card.appendChild(description);
-      card.addEventListener("click", () => {
-        openExpandedCard(data);
-      });
-    }
+if (data.details && data.details.trim()) {
+  const description = document.createElement("div");
+  description.className = "item-description";
+
+  let short = data.details.slice(0, 80);
+  const lastOpen = short.lastIndexOf("[");
+  const lastClose = short.lastIndexOf("]");
+  if (lastOpen > lastClose) {
+    short = short.slice(0, lastOpen);
+  }
+
+  short = short.trim();
+  const isTruncated = short.length < data.details.length;
+
+  description.innerHTML = parseWikiLinks(parseEmojis(short + (isTruncated ? "..." : "")));
+  card.appendChild(description);
+
+  card.addEventListener("click", () => {
+    openExpandedCard(data);
+  });
+}
 
     container.appendChild(card);
   });
