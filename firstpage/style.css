@@ -1025,3 +1025,42 @@ a.inline {
     text-decoration-line: underline;
   }
 }
+
+.submit-wrapper {
+  display: flex;
+  gap: .5rem;
+
+  .test-wrapper {
+    flex: 1;
+    display: flex;
+    aspect-ratio: 1;
+    margin: auto;
+  }
+
+  input[type="checkbox"] {
+    appearance: unset;
+    margin: 0 !important;
+    --border-weight: 2px;
+    height: calc(1rem - var(--border-weight));
+    aspect-ratio: 1;
+    box-sizing: content-box !important;
+    cursor: pointer;
+    transition: background-color .2s;
+    position: relative;
+    border: var(--border-weight) dashed gold !important;
+
+    &:checked {
+      background-color: #333 !important;
+
+      &::after {
+        content: '✔';
+        line-height: 1;
+        font-size: 1.5em;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        translate: -50% -50%;
+      }
+    }
+  }
+}

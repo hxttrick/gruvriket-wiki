@@ -137,6 +137,9 @@ function loadItems() {
       currentItems = [];
       snapshot.forEach((doc, index) => {
         const data = doc.data();
+
+        if (data.test && !auth.currentUser) return; // Visa bara test items om inloggad
+
         currentItems.push(data);
 
         if (adminList) {
