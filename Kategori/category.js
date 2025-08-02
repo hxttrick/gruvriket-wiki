@@ -6,7 +6,7 @@ function parseWikiLinks(text) {
   if (!text) return "";
   return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, url) => {
     const safeUrl = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
-    return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+    return `<a href="${safeUrl}" class="inline" rel="noopener noreferrer">${label}</a>`;
   });
 }
 

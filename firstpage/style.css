@@ -1005,19 +1005,23 @@ body, #category-list {
 
 .map-icon-image {
   aspect-ratio: 15/19;
-  height: 32px;
+  height: 38px;
   cursor: pointer;
   display: block;
   image-rendering: pixelated;
-  filter: grayscale(1);
+  filter: grayscale(1) brightness(.9);
+
+  &:hover {
+    filter: grayscale(1) brightness(1);
+  }
 }
 
-a {
+a.inline {
   color: #fff;
   text-decoration: none;
-}
 
-a:hover {
-  text-decoration-color: #ff5e00b4;
-  text-decoration-line: underline;
+  &:hover {
+    text-decoration-color: #ff5e00b4;
+    text-decoration-line: underline;
+  }
 }
