@@ -2,6 +2,13 @@ function getImageSrc(path) {
   if (path.startsWith("http")) return path;
   return "../assets/" + path.replace(/^\/+/, "");
 }
+function parseWikiLinks(text) {
+  if (!text) return "";
+  return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, url) => {
+    const safeUrl = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+    return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  });
+}
 
 function getQueryParam(name) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -34,7 +41,6 @@ function renderFilteredItems(query) {
         <div class="img" style="background-image: url(${getImageSrc(data.image)})"></div>
       </div>
     `;
-    //<img src="${getImageSrc(data.image)}" alt="${data.name}" draggable="false">
 
     const itemInfo = document.createElement("div");
     itemInfo.className = "item-info";
@@ -50,12 +56,11 @@ function renderFilteredItems(query) {
 
     const flavor = document.createElement("div");
     flavor.className = "item-flavor";
-    flavor.innerHTML = parseEmojis(data.flavor || "");
+    flavor.innerHTML = parseWikiLinks(parseEmojis(data.flavor || ""));
 
     const stats = document.createElement("div");
     stats.className = "item-stats";
-    stats.innerHTML = parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").replace(/\s+/g, " "));
-
+    stats.innerHTML = parseWikiLinks(parseEmojis((data.stats || "").replace(/\r?\n|\r/g, " ").replace(/\s+/g, " ")));
 
     const tags = document.createElement("div");
     tags.className = "item-tags";
@@ -67,16 +72,34 @@ function renderFilteredItems(query) {
     itemInfo.appendChild(stats);
     itemInfo.appendChild(tags);
 
+if (data.maplink) {
+  const mapIcon = document.createElement("a");
+  mapIcon.href = data.maplink;
+  mapIcon.target = "_blank";
+  mapIcon.rel = "noopener noreferrer";
+  mapIcon.className = "map-icon";
+
+  const mapImg = document.createElement("img");
+  mapImg.src = "/assets/gruvriket_marker.png";
+  mapImg.alt = "Map";
+  mapImg.className = "map-icon-image";
+
+  mapIcon.appendChild(mapImg);
+
+  mapIcon.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
+  card.appendChild(mapIcon);
+}
     card.appendChild(itemInfo);
 
     if (data.details && data.details.trim()) {
       const description = document.createElement("div");
       description.className = "item-description";
-      const short = data.details.slice(0, 80).trim(); // truncate to ~80 chars
-      description.innerHTML = parseEmojis(short + (short.length < data.details.length ? "..." : ""));
-
+      const short = data.details.slice(0, 80).trim();
+      description.innerHTML = parseWikiLinks(parseEmojis(short + (short.length < data.details.length ? "..." : "")));
       card.appendChild(description);
-
       card.addEventListener("click", () => {
         openExpandedCard(data);
       });
@@ -85,7 +108,6 @@ function renderFilteredItems(query) {
     container.appendChild(card);
   });
 }
-
 
 function loadItems() {
   const categoryId = getQueryParam("id");
@@ -122,25 +144,20 @@ function loadItems() {
             <div class="edit-fields" style="display: none; margin-top: 10px;">
               <label>Name</label>
               <input type="text" class="edit-name" value="${data.name || ""}" />
-
               <label>Image</label>
               <input type="text" class="edit-image" value="${data.image || ""}" />
-
               <label>Rarity</label>
               <input type="text" class="edit-rarity" value="${data.rarity || ""}" />
-
               <label>Flavor Text</label>
               <input type="text" class="edit-flavor" value="${data.flavor || ""}" />
-
               <label>Stats</label>
               <textarea class="edit-stats">${data.stats || ""}</textarea>
-
               <label>Tags (comma-separated)</label>
               <input type="text" class="edit-tags" value="${(data.tags || []).join(", ")}" />
-
               <label>Details (expandable section)</label>
               <textarea class="edit-details">${data.details || ""}</textarea>
-
+              <label>Map Link</label>
+              <input type="text" class="edit-maplink" value="${data.maplink || ""}" />
               <button class="save-edit">Save</button>
             </div>
           `;
@@ -158,7 +175,8 @@ function loadItems() {
               flavor: itemDiv.querySelector(".edit-flavor").value,
               stats: itemDiv.querySelector(".edit-stats").value.trim().replace(/\s+/g, " "),
               tags: itemDiv.querySelector(".edit-tags").value.split(",").map(t => t.trim()).filter(Boolean),
-              details: itemDiv.querySelector(".edit-details").value
+              details: itemDiv.querySelector(".edit-details").value,
+              maplink: itemDiv.querySelector(".edit-maplink").value
             };
             db.collection("itemsinfo").doc(doc.id).update(updates).then(loadItems);
           };
@@ -209,7 +227,7 @@ function enableDragAndDrop() {
   const items = [...list.querySelectorAll(".draggable-item")];
 
   items.forEach(item => {
-    item.addEventListener("dragstart", (e) => {
+    item.addEventListener("dragstart", e => {
       dragSrcEl = item;
       item.classList.add("dragging");
       placeholder.style.height = `${item.offsetHeight}px`;
@@ -221,19 +239,16 @@ function enableDragAndDrop() {
       dragSrcEl = null;
     });
 
-    item.addEventListener("dragover", (e) => {
+    item.addEventListener("dragover", e => {
       e.preventDefault();
       const rect = item.getBoundingClientRect();
       const offset = e.clientY - rect.top;
       const before = offset < rect.height / 2;
-      if (before) {
-        list.insertBefore(placeholder, item);
-      } else {
-        list.insertBefore(placeholder, item.nextSibling);
-      }
+      if (before) list.insertBefore(placeholder, item);
+      else list.insertBefore(placeholder, item.nextSibling);
     });
 
-    item.addEventListener("drop", (e) => {
+    item.addEventListener("drop", e => {
       e.preventDefault();
       if (dragSrcEl && placeholder.parentNode) {
         list.insertBefore(dragSrcEl, placeholder);
@@ -243,11 +258,11 @@ function enableDragAndDrop() {
     });
   });
 
-  placeholder.addEventListener("dragover", (e) => {
+  placeholder.addEventListener("dragover", e => {
     e.preventDefault();
   });
 
-  placeholder.addEventListener("drop", (e) => {
+  placeholder.addEventListener("drop", e => {
     e.preventDefault();
     if (dragSrcEl && placeholder.parentNode) {
       list.insertBefore(dragSrcEl, placeholder);
@@ -261,9 +276,7 @@ function updateItemOrder() {
   const list = document.getElementById("item-list");
   [...list.children].forEach((child, i) => {
     const id = child.getAttribute("data-id");
-    if (id) {
-      db.collection("itemsinfo").doc(id).update({ order: i });
-    }
+    if (id) db.collection("itemsinfo").doc(id).update({ order: i });
   });
   loadItems();
 }
@@ -274,7 +287,7 @@ if (categoryId) {
   setupAdminPanel(
     loadItems,
     "add-item-form",
-    ["item-name", "item-image", "item-rarity", "item-flavor", "item-stats", "item-tags", "item-details"],
+    ["item-name", "item-image", "item-rarity", "item-flavor", "item-stats", "item-tags", "item-details", "item-maplink"],
     "itemsinfo",
     { category: categoryId }
   );
@@ -291,6 +304,7 @@ if (categoryId) {
     renderFilteredItems(e.target.value);
   });
 }
+
 function openExpandedCard(data) {
   closeExpandedCard();
 
@@ -307,13 +321,12 @@ function openExpandedCard(data) {
     <div class="item-info">
       <img class="rarity-image" src="${getImageSrc(data.rarity)}" alt="rarity">
       <div class="item-name">${data.name}</div>
-      <div class="item-flavor">${parseEmojis(data.flavor || "")}</div>
-      <div class="item-stats">${parseEmojis(data.stats || "")}</div>
+      <div class="item-flavor">${parseWikiLinks(parseEmojis(data.flavor || ""))}</div>
+      <div class="item-stats">${parseWikiLinks(parseEmojis(data.stats || ""))}</div>
       <div class="item-tags">${(data.tags || []).map(tag => `<span class="tag">${tag}</span>`).join(" ")}</div>
-      <div class="item-description">${parseEmojis(data.details || "")}</div>
+      <div class="item-description">${parseWikiLinks(parseEmojis(data.details || ""))}</div>
     </div>
   `;
-  //<img src="${getImageSrc(data.image)}" alt="${data.name}">
 
   overlay.appendChild(card);
   document.body.appendChild(overlay);
