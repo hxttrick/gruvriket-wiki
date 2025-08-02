@@ -275,9 +275,9 @@ textarea {
 #category-list {
   margin-top: 1rem;
   max-height: 300px;        /* Controls the scrollable height */
-  overflow-y: auto;         /* Enables vertical scrolling */
+  overflow-y: scroll;         /* Enables vertical scrolling */
   padding-right: 6px;       /* Optional: Avoid scrollbar overlap */
-  border: 1px solid #333;   /* Optional: for visual boundary */
+  /*border: 1px solid #333;   /* Optional: for visual boundary */
 }
 
 #category-list > div {
@@ -968,4 +968,22 @@ span.chatgpt {
   translate: -.125rem -100%;
   opacity: .02;
   user-select: none;
+}
+
+body, #category-list {
+  --sb-track-color: #1e1e1e;
+  --sb-thumb-color: #444;
+  --sb-size: 8px;
+
+  &::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+  &::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 4px;
+  }
 }
