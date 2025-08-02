@@ -5,8 +5,8 @@ function getImageSrc(path) {
 function parseWikiLinks(text) {
   if (!text) return "";
   return text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, label, url) => {
-    const safeUrl = url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
-    return `<a href="${safeUrl}" class="inline" rel="noopener noreferrer">${label}</a>`;
+    const safeUrl = url.startsWith("http://") || url.startsWith("https://") || url.startsWith('/') ? url : `https://${url}`;
+    return `<a href="${safeUrl}" class="inline" ${safeUrl.startsWith('/') ? '' : 'target="_blank"'} rel="noopener noreferrer">${label}</a>`;
   });
 }
 
@@ -96,7 +96,7 @@ if (data.maplink) {
 
 if (data.details && data.details.trim()) {
   const description = document.createElement("div");
-  description.className = "item-description";
+  description.className = "item-description truncate";
 
   let short = data.details.slice(0, 80);
   const lastOpen = short.lastIndexOf("[");
@@ -108,7 +108,7 @@ if (data.details && data.details.trim()) {
   short = short.trim();
   const isTruncated = short.length < data.details.length;
 
-  description.innerHTML = parseWikiLinks(parseEmojis(short + (isTruncated ? "..." : "")));
+  description.innerHTML = parseWikiLinks(parseEmojis(/*short*/ data.details + (isTruncated ? "..." : "")));
   card.appendChild(description);
 
   card.addEventListener("click", () => {

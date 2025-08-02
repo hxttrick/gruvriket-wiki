@@ -698,7 +698,8 @@ a.discord {
   
   .item-description { /**/
     grid-column: span 2;
-    margin: 0 .5rem;
+    margin-left: .5rem;
+    margin-right: 1.875rem;
     color: #bbb;
     font-size: .8rem;
     font-style: italic;
@@ -828,9 +829,9 @@ a.discord {
 }
 
 .truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
 }
 
 #credits-container h2 {
@@ -1005,7 +1006,7 @@ body, #category-list {
 
 .map-icon-image {
   aspect-ratio: 15/19;
-  height: 38px;
+  width: 1.875rem;
   cursor: pointer;
   display: block;
   image-rendering: pixelated;
