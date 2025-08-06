@@ -520,7 +520,7 @@ textarea {
 
 .inline-emoji {
   display: inline-block;
-  height: 1em;
+  height: 1.7em;
   width: auto;
   vertical-align: text-bottom;
   image-rendering: pixelated;
@@ -529,7 +529,7 @@ textarea {
 
 .inline-emoji {
   display: inline-block !important;
-  height: 1em;
+  height: 1.7em;
   width: auto;
   vertical-align: middle;
   image-rendering: pixelated;

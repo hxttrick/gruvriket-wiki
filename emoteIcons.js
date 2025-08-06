@@ -22,7 +22,10 @@ const emojiMap = {
 ":bag:": "../assets/emotes/ryggsack.png",
 ":ring:": "../assets/emotes/tillbehor.png",
 ":atlas:": "../assets/emotes/atlas.png",
-":vagsten:": "../assets/emotes/vagsten.png"
+":vagsten:": "../assets/emotes/vagsten.png",
+":tra:": "../assets/sprites/material/tra.png",
+":skarva:": "../assets/sprites/material/skarva.png",
+":sten:": "../assets/sprites/material/sten.png"
 
 };
 
