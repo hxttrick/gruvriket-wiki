@@ -25,8 +25,8 @@ const emojiMap = {
 ":vagsten:": "../assets/emotes/vagsten.png",
 ":tra:": "../assets/sprites/material/tra.png",
 ":skarva:": "../assets/sprites/material/skarva.png",
-":sten:": "../assets/sprites/material/sten.png"
-
+":sten:": "../assets/sprites/material/sten.png",
+":hjarta:": "../assets/emotes/hjarta.png",
 };
 
 function parseEmojis(text) {
