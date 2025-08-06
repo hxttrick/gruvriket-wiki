@@ -1,0 +1,72 @@
+@font-face {
+    font-family: 'Retro Computer';
+    src: url('assets/retro_computer.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #111;
+    display: grid;
+    grid-template-rows: 1fr 4fr 1fr;
+    height: 100vh;
+    font-family: sans-serif;
+}
+
+header {
+    display: grid;
+    grid-template-rows: 1fr 6fr 1fr;
+}
+
+header #logo {
+    grid-row: 2;
+    background-image: url(assets/gruvriket3.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    min-height: 4rem;
+}
+
+main {
+    display: flex;
+    align-items: center;
+    background: #121212;
+}
+
+main .banner {
+    display: grid;
+    place-content: center;
+
+    height: 3em;
+    width: 100%;
+
+    image-rendering: pixelated;
+    background-image: url(assets/construction_bg.png);
+    background-size: contain;
+    background-position: 50%;
+
+    font-family: 'Retro Computer', sans-serif;
+    font-size: 1.4rem;
+    text-rendering: geometricPrecision;
+    text-transform: uppercase;
+    text-wrap: nowrap;
+    color: #fff;
+
+    --outline-width: 0.2rem;
+    --outline-color: #000;
+    text-shadow:
+        calc(-1 * var(--outline-width)) calc(-1 * var(--outline-width)) 0 var(--outline-color),
+        var(--outline-width)           calc(-1 * var(--outline-width)) 0 var(--outline-color),
+        calc(-1 * var(--outline-width))  var(--outline-width)           0 var(--outline-color),
+        var(--outline-width)            var(--outline-width)           0 var(--outline-color);
+}
+
+footer {
+    display: grid;
+    place-content: center;
+    color: #aaa;
+}

@@ -93,14 +93,12 @@ editForm.innerHTML = `
   const title = titleInput.value.trim();
   const image = imageInput.value.trim();
   const link = linkInput.value.trim();
-  const tags = tagsInput.value.trim().toLowerCase().split(",").map(tag => tag.trim()).filter(Boolean);
-  const searchIndex = [title.toLowerCase(), ...tags];
+  const searchIndex = [title.toLowerCase()];
 
   db.collection("categories").doc(doc.id).update({
     title,
     image,
     link,
-    tags,
     searchIndex
   }).then(() => {
     loadCategories();
@@ -358,7 +356,7 @@ searchInput.addEventListener("input", async () => {
       result.appendChild(image);
 
       result.onclick = () => {
-        const link = `/Kategori/category.html?id=${categoryId}`;
+        const link = `/kategori/index.html?id=${categoryId}`;
         window.location.href = link;
       };
 

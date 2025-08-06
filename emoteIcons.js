@@ -20,7 +20,9 @@ const emojiMap = {
 ":magi:": "../assets/emotes/magiskt.png",
 ":orangeutrop:": "../assets/emotes/neutral_prefix.png",
 ":bag:": "../assets/emotes/ryggsack.png",
-":ring:": "../assets/emotes/tillbehor.png"
+":ring:": "../assets/emotes/tillbehor.png",
+":atlas:": "../assets/emotes/atlas.png",
+":vagsten:": "../assets/emotes/vagsten.png"
 
 };
 

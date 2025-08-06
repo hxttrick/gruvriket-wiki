@@ -1,22 +1,132 @@
 <!DOCTYPE html>
+<!--
+⬛⬛🟩🟩⬛⬛⬛⬛⬛🟩🟩⬛⬛
+⬛⬛🟩⬛⬛⬛⬛⬛⬛⬛🟩⬛⬛
+⬛⬛⬛🟩⬛🟩⬛🟩⬛🟩⬛⬛⬛ 
+⬛⬛⬛⬛⬛🟩🟩🟩⬛⬛⬛⬛⬛
+⬛⬛🟩⬛⬛⬛⬛⬛⬛⬛🟩⬛⬛
+⬛⬛🟩🟩⬛⬛⬛⬛⬛🟩🟩⬛⬛ 
+Approved by Slem
+Made by Vamoi & Hxttrick 
+-->
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gruvriket Wiki</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Gruvriket Wiki</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
-    <header>
-        <div id="logo"></div>
+  <div class="main-content">
+    <header class="banner">
+      <a href="https://www.gruvriket.se/">
+        <img src="../assets/gruvriket3.png" alt="Banner" class="banner-image">
+      </a>
     </header>
-    <main>
-        <div class="banner">
-            <h1>Under konstruktion</h1>
+      <div class="mc-card" id="mc-status">
+    <div class="mc-section" id="section-motd">
+      <strong></strong> <span id="motd">Laddar...</span>
+    </div>
+    <div class="mc-section" id="section-players">
+      <strong>Spelare:</strong> <span id="players">laddar...</span>
+    </div>
+  </div>
+    <div class="search-wrapper">
+  <input class="search-input" id="global-search" placeholder="Sök genom hela wikin här..." autocomplete="off">
+  <div id="search-modal" class="search-modal"></div>
+</div>
+
+    <main class="cards-wrapper">
+      <div class="cards-container" id="cards-container"></div>
+
+      <section id="login-panel-wrapper" style="display: none;">
+        <div id="login-panel-overlay"></div>
+        <div id="login-panel-modal">
+          <div class="admin-header">
+            <h3>Admin Login</h3>
+            <button id="close-login-modal" class="modal-close-btn" aria-label="Close">×</button>
+          </div>
+          <h5>Endast admins på Gruvriket Wiki kan logga in här!<h5>
+          <form id="login-form">
+            <input type="email" id="email" placeholder="E-post" required />
+            <input type="password" id="password" placeholder="Lösenord" required />
+            <button type="submit">Logga in</button>
+          </form>
         </div>
+      </section>
+
+      <section id="admin-panel-wrapper" style="display: none;">
+        <div id="admin-panel-overlay"></div>
+        <div id="admin-panel-modal">
+          <div class="admin-header">
+            <h3>Admin Panel</h3>
+            <button id="close-admin-modal" class="modal-close-btn" aria-label="Close">×</button>
+          </div>
+
+          <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="categories">Kategorier</button>
+<!-- kan lägga till mer inställningar i panelen här-->
+          </div>
+
+          <div class="admin-section" id="admin-tab-categories">
+            <form id="add-category-form">
+              <input type="text" id="category-title" placeholder="Namn på kategori" required />
+              <input type="text" id="category-image" placeholder="URL eller filnamn `placeholder.png`" required />
+              <input type="text" id="category-link" placeholder="Länk till sida för kategori" required />
+              <button type="submit">Lägg till kategori</button>
+            </form>
+            <div id="category-list" style="margin-top: 1rem;"></div>
+          </div>
+          <button id="logout-btn" style="margin-top: 1rem;">Logga ut</button>
+        </div>
+      </section>
     </main>
-    <footer>
-        <p>© 2025 gruvriket.se</p>
-    </footer>
+  </div>
+
+  <footer class="footer">
+    <p>© 2025 gruvriket.se</p>
+    <div class="admin-controls">
+      <button id="show-login-btn" style="display: none;">Admin Login</button>
+      <button id="open-admin-panel" style="display: none;">Admin Panel</button>
+    </div>
+    <a href="https://discord.com/invite/XQHVGYsa4P" target="_blank" class="discord"></a>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginBtn = document.getElementById('show-login-btn');
+      const openPanelBtn = document.getElementById('open-admin-panel');
+      const adminWrapper = document.getElementById('admin-panel-wrapper');
+
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          try {
+            const tokenResult = await user.getIdTokenResult();
+            const isAdmin = tokenResult.claims.admin === true;
+
+            if (isAdmin) {
+              loginBtn.style.display = 'none';
+              openPanelBtn.style.display = 'inline-block';
+            } else {
+              loginBtn.style.display = 'none';
+              openPanelBtn.style.display = 'none';
+            }
+          } catch (error) {
+            console.error('Failed to fetch token claims:', error);
+            loginBtn.style.display = 'inline-block';
+            openPanelBtn.style.display = 'none';
+          }
+        } else {
+          loginBtn.style.display = 'inline-block';
+          openPanelBtn.style.display = 'none';
+        }
+      });
+    });
+  </script>
+
+  <script src="fpage.js"></script>
 </body>
 </html>
